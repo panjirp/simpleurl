@@ -18,14 +18,18 @@ function getUrl(){
 
 function genHash(){
     if (window.location.hash == ""){
-        window.location.hash = getRandom();
+        var hash = getRandom();
+        var url = window.location + '#' + hash;
+        document.getElementById("urlinput").value = url;
+        return hash;
     }
 }
 
-function sendRequest(url) {
-    this.url = url;
+function sendRequest(url, hash) {
+    this.url = url + '#' + hash;
+    console.log(hash.substr(1));
     $.ajax({
-        'url': endpoint + "/" + window.location.hash.substr(1),
+        'url': endpoint + "/" + hash,
         'type': 'POST',
         'data': JSON.stringify(this.url),
         'dataType': 'json',
@@ -36,8 +40,9 @@ function sendRequest(url) {
 
 function shortUrl(){
     var longurl = getUrl();
-    genHash();
-    sendRequest(longurl);
+    console.log(longurl);
+    var hash = genHash();
+    sendRequest(longurl, hash);
 }
 
 var hashh = window.location.hash.substr(1)
@@ -51,4 +56,15 @@ if (window.location.hash != "") {
         }
 
     });
+}
+
+function copyUrl(){
+    var selected = document.getElementById("urlinput").value;
+    var tempInput = document.createElement('input');
+    tempInput.setAttribute('value', selected);
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    var result = document.execCommand("copy");
+    document.body.removeChild(tempInput);
+    return result;
 }
